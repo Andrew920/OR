@@ -5,20 +5,20 @@
 ### Spremenljivke: 
 ``` 
 poslji_t: Koda, ki bo poslana preko debug   
-prejmi_t: Koda prejeta preko debug vmesnika
+prejmi_t: Koda prejeta preko debug enote
 kode: Morsejeva koda za posamezno črko
 ```
 
 ### Začetek
 ```
 __start:  
-          bl [DEBUG_INIT](test.com) -> Pripravimo debug za uporabo
+          bl DEBUG_INIT -> Pripravimo debug enoto za uporabo
           bl INIT_IO -> Pripravimo LED za uporabo
           bl MAIN -> skočimo v glavno metodo
 ```
 
 ### Glavna metoda
-Podatki se v zanki POSLJI pošiljajo doker se ne zapišejo vsi podatki iz spremenljivke pošlji_t. Podatki se en za drugim zapisujejo v spremenljivko prejmi_t. To se dogaja preko debug vmesnika, ki pošlje en podatek in ga nato prejme in zapiše. Ko so vsi podaki poslani in prejeti se pokliče ODDAJ_SIGNAL, ki nato pokljiče metodo XWORD, ki poskrbi za izpis teh črk.
+Podatki se v zanki POSLJI pošiljajo dokler se ne zapišejo vsi podatki iz spremenljivke pošlji_t. Podatki se en za drugim zapisujejo v spremenljivko prejmi_t. To se dogaja preko debug enote, ki pošlje en podatek in ga nato prejme in zapiše. Ko so vsi podatki poslani in prejeti se pokliče ODDAJ_SIGNAL, ki nato pokliče metodo XWORD, ki poskrbi za izpis teh črk.
 ```
 MAIN:
           adr r1, poslji_t
@@ -44,7 +44,7 @@ ODDAJ_SIGNAL:
 
 ### Metoda XWORD
 
-Prejme besedo iz prejšne metode in jo črko po črko pošilja v metodo GETMCODE, ki nato izpisuje te črke.
+Prejme besedo iz prejšnje metode in jo črko po črko pošilja v metodo GETMCODE, ki nato izpisuje te črke.
 ```
 XWORD:    
           adr r0, prejmi_t
@@ -60,7 +60,7 @@ __end:    b __end
 ```
 
 ### Metoda GETMCODE
-V registeru r0 prejme črko, nato najde morsevo kodo za to črko in naslov do te kode zapiše v register r0 in pokliče metodo XMCODE 
+V registru r0 prejme črko, nato najde Morse Code za to črko in naslov do te kode zapiše v register r0 in pokliče metodo XMCODE 
 
 ```
 GETMCODE:
@@ -78,7 +78,7 @@ GETMCODE:
 ```
 
 ### Metoda XMCODE
-V registru r0 dobi naslov do signala črke, ki jo je potrebno izpisati in v zanki kliče metodo XMCHAR, ki nato poskrbi, da se vsak znak izpište. To ponavlja dokler se ne izpišejo vsi znaki in se nato vrne na metodo GETMCODE.
+V registru r0 dobi naslov do signala črke, ki jo je potrebno izpisati in v zanki kliče metodo XMCHAR, ki nato poskrbi, da se vsak znak izpiše. To ponavlja dokler se ne izpišejo vsi znaki in se nato vrne na metodo GETMCODE.
 
 ```
 XMCODE:   
@@ -102,7 +102,7 @@ XMCODE_CONTINUE:
 ```
 
 ### Metoda XMCHAR
-V registeru r0 prejme znak '-' ali '.', ki ga je izpisati in ga nato izpiše v obliki dolgega prižiga LED (300 ms) ali kratkega prižiga LED (150 ms). Nato naredi še pavzo za 150 ms.
+V registru r0 prejme znak '-' ali '.', ki ga je izpisati in ga nato izpiše v obliki dolgega prižiga LED (300 ms) ali kratkega prižiga LED (150 ms). Nato naredi še pavzo za 150 ms.
 
 ```
 XMCHAR:   
@@ -162,7 +162,7 @@ LED_OFF:
 ```
 
 ### Metoda delay
-Počaka določen čas. Čas je vnsešen v register r5. Notranja zanka se izvede 48000-krat kar uzame 1 ms zunanja zanka se pa izvede tolikokrat kolikor smo nastavili v registru r5.
+Počaka določen čas. Čas je vnesen v register r5. Notranja zanka se izvede 48000-krat kar traja 1 ms zunanja zanka se pa izvede tolikokrat kolikor smo nastavili v registru r5.
 ```
 DELAY:
           stmfd r13!, {r1, r5, r14}
@@ -183,9 +183,9 @@ DELAY_1MS:
           ldmfd r13!, {r1, r5, pc}     
 ```
 ### Metode debug
-DEBUG_INIT: Inicializira debug   
-RCV_DEBUG: Poslje znak v debug   
-SNDD_DEBUG: Prebere znak iz debug   
+DEBUG_INIT: Inicializira debug enoto  
+RCV_DEBUG: Pošlje znak v debug enoto, ki ga prejme v register r0  
+SNDD_DEBUG: Prebere znak iz debug enote in ga zapiše v r0  
 
 ```
 DEBUG_INIT:
