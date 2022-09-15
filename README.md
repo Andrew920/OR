@@ -184,7 +184,7 @@ DELAY_1MS:
 ```
 ### Metode debug
 DEBUG_INIT: Inicializira debug enoto  
-RCV_DEBUG: Pošlje znak v debug enoto, ki ga prejme v register r0  
+RCV_DEBUG: Pošlje znak v debug enoto, ki ga prejme v registru r0  
 SNDD_DEBUG: Prebere znak iz debug enote in ga zapiše v r0  
 
 ```
